@@ -1,0 +1,14 @@
+@model string
+@{
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+<div class="card bg-light text-dark">
+    <h3 class="card-header">Xin chào @Model</h3>
+    <div class="card-body">
+        <p class="card-text">
+            Bạn đang tìm hiểu về View (.cshtml)
+        </p>
+    </div>
+</div>
+<hr>
+@this.Path

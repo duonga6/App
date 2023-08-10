@@ -1,0 +1,10 @@
+@{
+    var tempdata = TempData["thongbao"] as string;
+}
+
+@if (!string.IsNullOrEmpty(tempdata))
+{
+    <div class="alert alert-danger" role="alert">
+        @tempdata
+    </div>
+}
