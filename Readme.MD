@@ -14,7 +14,7 @@
       VD: logger, dbcontext, ...
 
 ## Action
-   -  Là phương thức được khai báo public, nó có thể trả về bất kì nội dung gì,
+   -  Là phương thức được khai báo public, nó có thể trả về bất kì kiểu dữ liệu gì,
       nội dung trả về của nó được Convert thành chuỗi và trả về nội dung cho Client
    -  Đối với IActionResult có rất nhiều kiểu trả về:
       Kiểu trả về                 | Phương thức          | Mô tả
@@ -42,6 +42,14 @@
 
 ## View
    - Là file cshtml
+
+## Area:
+   - Thiết lập cho Controller thuộc 1 vùng nào đó
+   - Là tên dùng để Routing
+   - Là cấu trúc thư mục chưa MVC
+   - Thiết lập Area cho Controller bằng [Area("AreaName")]
+   - Tạo cấu trúc thư mục:
+      dotnet aspnet-codegenerator area AreaName
 
 ## logger:
    - Có 6 cấp độ của logger:
