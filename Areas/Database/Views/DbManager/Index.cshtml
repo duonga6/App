@@ -1,0 +1,53 @@
+@using Microsoft.EntityFrameworkCore
+@using System.Data
+
+@inject AppDbContext dbContext
+
+@{
+    ViewData["Title"] = "Thông tin DB";
+    var connect = dbContext.Database.GetDbConnection();
+    var dbname = connect.Database;
+    var can_connect = dbContext.Database.CanConnect();
+
+
+}
+
+<partial name="_AlertMessage" />
+
+<h2>Thông tin cơ sở dữ liệu</h2>
+<p>- Database: @dbname</p>
+<p>- Source: @connect.DataSource</p>
+<p>- State: @connect.State</p>
+<hr>
+<h2>Migrations</h2>
+@foreach (var item in dbContext.Database.GetAppliedMigrations())
+{
+    <p>@item</p>
+}
+@foreach (var item in dbContext.Database.GetPendingMigrations())
+{
+    <p>@item (pending)</p>
+}
+
+@if (!can_connect)
+{
+    <p class="alert alert-danger">Không thể kết nối tới CDSL</p>
+    @if (dbContext.Database.GetPendingMigrations().Any())
+    {
+        <a class="btn btn-success" asp-action="Migrations">Cập nhật Database</a>
+    }
+}
+else
+{
+    <h2>Các Table:</h2>
+    await dbContext.Database.OpenConnectionAsync();
+    var table = dbContext.Database.GetDbConnection().GetSchema("Tables");
+    <ul>
+        @foreach (System.Data.DataRow row in table.Rows)
+        {
+            <li>@row["TABLE_NAME"]</li>
+        }
+    </ul>
+
+    <a class="btn btn-danger" asp-action="DeleteDB">Xóa Database: @dbname</a>
+}

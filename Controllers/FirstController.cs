@@ -103,7 +103,7 @@ namespace App.Controllers
             var product = _productService.Where(sp => sp.Id == id).FirstOrDefault();
             if (product == null) 
             {
-                TempData["thongbao"] = "Sản phẩm bạn yêu cầu không có";
+                TempData["StatusMessage"] = "Sản phẩm bạn yêu cầu không có";
                 return Redirect(Url.Action("Index", "Home"));
             }
 

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using App.ExtendMethods;
+using App.Models;
 using App.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.AspNetCore.Routing.Constraints;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -40,6 +42,12 @@ namespace App
             });
             services.AddSingleton<ProductService, ProductService>();
             services.AddSingleton(typeof(PlanetService), typeof(PlanetService));
+
+            services.AddDbContext<AppDbContext>(options =>
+            {
+                string connectString = Configuration.GetConnectionString("AppMvcContext");
+                options.UseSqlServer(connectString);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
