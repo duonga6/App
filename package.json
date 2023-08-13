@@ -1,0 +1,25 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "description": "- Là một lớp kế thừ từ lớp Controller: Microsoft.AspNetCore.Mvc.Controller\r    - Trong Controller có các properties giống trong Page Model:\r       this.HttpContext\r       this.Request\r       this.Response\r       this.User\r       this.ModelState\r       this.ViewData\r       this.ViewBag\r       this.Url\r       this.TempData\r    - Có thể Inject các dịch vụ qua phương thức khởi tạo:\r       VD: logger, dbcontext, ...",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "gulp": "^4.0.2",
+    "gulp-concat": "^2.6.1",
+    "gulp-cssmin": "^0.2.0",
+    "gulp-less": "^5.0.0",
+    "gulp-postcss": "^9.0.1",
+    "gulp-rename": "^2.0.0",
+    "gulp-sass": "^5.1.0",
+    "gulp-uglify": "^3.0.2",
+    "node-sass": "^9.0.0",
+    "postcss": "^8.4.27",
+    "rimraf": "^5.0.1",
+    "sass": "^1.65.1"
+  }
+}
