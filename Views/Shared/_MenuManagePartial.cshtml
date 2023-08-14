@@ -1,10 +1,24 @@
-<div class="dropdown open">
-    <button class="btn btn-outline-danger dropdown-toggle" type="button" id="triggerId" data-toggle="dropdown" aria-haspopup="true"
-            aria-expanded="false">
-                Manager
-            </button>
-    <div class="dropdown-menu" aria-labelledby="triggerId">
-        <a class="dropdown-item" asp-action="Index" asp-controller="DbManager" asp-area="Database">Database</a>
-        <a class="dropdown-item" asp-action="Index" asp-controller="Contact" asp-area="Contact">Quản lý liên hệ</a>
+@using Microsoft.AspNetCore.Authorization
+
+@inject IAuthorizationService authorization
+
+@{
+    var result = await authorization.AuthorizeAsync(this.User, "ViewAdminMenu");
+}
+
+@if (result.Succeeded)
+{
+
+    <div class="dropdown open">
+        <button class="btn btn-outline-danger dropdown-toggle" type="button" id="triggerId" data-toggle="dropdown"
+            aria-haspopup="true" aria-expanded="false">
+            Manager
+        </button>
+        <div class="dropdown-menu" aria-labelledby="triggerId">
+            <a class="dropdown-item" asp-action="Index" asp-controller="DbManager" asp-area="Database">Database</a>
+            <a class="dropdown-item" asp-action="Index" asp-controller="Contact" asp-area="Contact">Quản lý liên hệ</a>
+            <a class="dropdown-item" asp-action="Index" asp-controller="Role" asp-area="Identity">Quản lý Role</a>
+            <a class="dropdown-item" asp-action="Index" asp-controller="User" asp-area="Identity">Quản lý thành viên</a>
+        </div>
     </div>
-</div>
+}

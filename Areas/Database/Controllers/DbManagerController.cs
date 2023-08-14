@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using App.Data;
 using App.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,9 +17,15 @@ namespace App.Areas.Database.Controllers
 
         private readonly AppDbContext _dbContext;
 
-        public DbManagerController(AppDbContext dbContext)
+        private readonly UserManager<AppUser> _userManager;
+
+        private readonly RoleManager<IdentityRole> _roleManager;
+
+        public DbManagerController(AppDbContext dbContext, UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             _dbContext = dbContext;
+            _userManager = userManager;
+            _roleManager = roleManager;
         }
 
         public IActionResult Index()
@@ -49,6 +57,38 @@ namespace App.Areas.Database.Controllers
            await _dbContext.Database.MigrateAsync();
            StatusMessage = "Cập nhật thành công";
            return RedirectToAction(nameof(Index));
+        }
+
+        public async Task<IActionResult> SeedDataAsync()
+        {
+            var rolenames = typeof(RoleName).GetFields().ToList();
+            foreach (var r in rolenames)
+            {
+                var rolename = (string)r.GetRawConstantValue();
+                var rfound = await _roleManager.FindByNameAsync(rolename);
+                if (rfound == null)
+                {
+                    await _roleManager.CreateAsync(new IdentityRole(rolename));
+                }
+            }
+
+            var useradmin = await _userManager.FindByNameAsync("admin");
+            if (useradmin == null)
+            {
+                var uadmin = new AppUser()
+                {
+                    UserName = "admin",
+                    Email = "admin@example.com",
+                    EmailConfirmed = true
+                };
+
+                await _userManager.CreateAsync(uadmin, "admin123");
+                await _userManager.AddToRoleAsync(uadmin, RoleName.Administrator);
+            }
+
+            StatusMessage = "Vừa Seed Database";
+
+            return RedirectToAction("Index");
         }
     }
 }

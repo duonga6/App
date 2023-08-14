@@ -9,10 +9,12 @@ using App.Models;
 using ContactModel = App.Models.Contacts.Contact;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
+using App.Data;
 
 namespace App.Areas.Contact.Controllers
 {
     [Area("Contact")]
+    [Authorize(Roles = RoleName.Administrator)]
     public class ContactController : Controller
     {
         private readonly AppDbContext _context;
@@ -55,6 +57,7 @@ namespace App.Areas.Contact.Controllers
 
         // GET: Contact/Contact/Create
         [HttpGet("/contact")]
+        [AllowAnonymous]
         public IActionResult SendContact()
         {
             return View();

@@ -29,13 +29,15 @@
     <p>@item (pending)</p>
 }
 
+@if (dbContext.Database.GetPendingMigrations().Any())
+{
+    <a class="btn btn-success" asp-action="Migrations">Cập nhật Database</a>
+}
+
 @if (!can_connect)
 {
     <p class="alert alert-danger">Không thể kết nối tới CDSL</p>
-    @if (dbContext.Database.GetPendingMigrations().Any())
-    {
-        <a class="btn btn-success" asp-action="Migrations">Cập nhật Database</a>
-    }
+
 }
 else
 {
@@ -49,5 +51,7 @@ else
         }
     </ul>
 
+    <a class="btn btn-success mb-2" asp-action="SeedData">Seed Data</a>
+    <br>
     <a class="btn btn-danger" asp-action="DeleteDB">Xóa Database: @dbname</a>
 }
