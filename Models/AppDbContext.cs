@@ -30,13 +30,30 @@ namespace App.Models
             }
 
             modelBuilder.Entity<Category>(entity => {
-                entity.HasIndex(c => c.Slug);
+                entity.HasIndex(c => c.Slug)
+                        .IsUnique();
+            });
+
+            modelBuilder.Entity<PostCategory>(entity => {
+                entity.HasKey(c => new {
+                    c.PostID,
+                    c.CategoryID
+                });
+            });
+
+            modelBuilder.Entity<Post>(entity => {
+                entity.HasIndex(p => p.Slug)
+                        .IsUnique();
             });
         }
 
         public DbSet<Contact> Contacts {set;get;}
 
         public DbSet<Category> Categories {set;get;}
+
+        public DbSet<Post> Posts {set;get;}
+
+        public DbSet<PostCategory> PostCategories {set;get;}
 
     }
 }

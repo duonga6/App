@@ -59,10 +59,11 @@ namespace App.Areas.Blog.Controllers
 
         private void CreateItem(List<Category> src, List<Category> des, int level)
         {
-            foreach(var category in src)
+            foreach (var category in src)
             {
                 string prefix = string.Concat(Enumerable.Repeat("----", level));
-                des.Add(new Category() {
+                des.Add(new Category()
+                {
                     Id = category.Id,
                     Title = prefix + category.Title
                 });
@@ -84,7 +85,8 @@ namespace App.Areas.Blog.Controllers
                         .Where(c => c.ParentCategory == null)
                         .ToList();
 
-            cate.Insert(0, new Category(){
+            cate.Insert(0, new Category()
+            {
                 Title = "Không có danh mục cha",
                 Id = -1
             });
@@ -94,7 +96,7 @@ namespace App.Areas.Blog.Controllers
             CreateItem(cate, items, 0);
 
             var selectList = new SelectList(items, "Id", "Title");
-            
+
             ViewData["ParentCategoryId"] = selectList;
 
 
@@ -124,7 +126,8 @@ namespace App.Areas.Blog.Controllers
                         .Where(c => c.ParentCategory == null)
                         .ToList();
 
-            cate.Insert(0, new Category(){
+            cate.Insert(0, new Category()
+            {
                 Title = "Không có danh mục cha",
                 Id = -1
             });
@@ -134,7 +137,7 @@ namespace App.Areas.Blog.Controllers
             CreateItem(cate, items, 0);
 
             var selectList = new SelectList(items, "Id", "Title");
-            
+
             ViewData["ParentCategoryId"] = selectList;
 
             return View(category);
@@ -162,7 +165,8 @@ namespace App.Areas.Blog.Controllers
                         .Where(c => c.ParentCategory == null)
                         .ToList();
 
-            cate.Insert(0, new Category(){
+            cate.Insert(0, new Category()
+            {
                 Title = "Không có danh mục cha",
                 Id = -1
             });
@@ -172,7 +176,7 @@ namespace App.Areas.Blog.Controllers
             CreateItem(cate, items, 0);
 
             var selectList = new SelectList(items, "Id", "Title");
-            
+
             ViewData["ParentCategoryId"] = selectList;
 
             return View(category);
@@ -190,12 +194,45 @@ namespace App.Areas.Blog.Controllers
                 return NotFound();
             }
 
+            bool canUpdate = true;
+
             if (category.Id == category.ParentCategoryId)
             {
                 ModelState.AddModelError(string.Empty, "Phải chọn danh mục cha khác với danh mục này");
+                canUpdate = false;
             }
-            if (ModelState.IsValid && category.Id != category.ParentCategoryId)
+
+            if (canUpdate && category.ParentCategoryId != null)
             {
+                var childCates = (from c in _context.Categories select c)
+                                    .AsNoTracking()
+                                    .Include(c => c.CategoryChildren)
+                                    .ToList()
+                                    .Where(c => c.ParentCategoryId == category.Id);
+
+                Func<List<Category>, bool> checkCateIds = null;
+                checkCateIds = (cates) =>
+                {
+                    foreach (var cate in cates)
+                    {
+                        if (cate.Id == category.ParentCategoryId)
+                        {
+                            canUpdate = false;
+                            ModelState.AddModelError(string.Empty, "Phải chọn danh mục cha khác");
+                            return true;
+                        }
+                        if (cate.CategoryChildren != null)
+                            return checkCateIds(cate.CategoryChildren.ToList());
+                    }
+                    return false;
+                };
+
+                checkCateIds(childCates.ToList());
+            }
+
+            if (ModelState.IsValid && canUpdate)
+            {
+                Console.WriteLine("ABC");
                 try
                 {
                     if (category.ParentCategoryId == -1) category.ParentCategoryId = null;
@@ -223,7 +260,8 @@ namespace App.Areas.Blog.Controllers
                         .Where(c => c.ParentCategory == null)
                         .ToList();
 
-            cate.Insert(0, new Category(){
+            cate.Insert(0, new Category()
+            {
                 Title = "Không có danh mục cha",
                 Id = -1
             });
@@ -233,7 +271,7 @@ namespace App.Areas.Blog.Controllers
             CreateItem(cate, items, 0);
 
             var selectList = new SelectList(items, "Id", "Title");
-            
+
             ViewData["ParentCategoryId"] = selectList;
 
             return View(category);
@@ -269,7 +307,7 @@ namespace App.Areas.Blog.Controllers
 
             if (category == null) return NotFound();
 
-            foreach(var item in category.CategoryChildren)
+            foreach (var item in category.CategoryChildren)
             {
                 item.ParentCategoryId = category.ParentCategoryId;
             }
