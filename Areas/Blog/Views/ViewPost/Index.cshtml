@@ -1,0 +1,82 @@
+@using App.Components
+@model List<Post>
+@{
+    List<Category> categories = ViewBag.categories as List<Category>;
+    Category category = ViewBag.category;
+    ViewData["Title"] = (category == null) ? "Tất cả bài viết" : category.Title;
+}
+
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-action="Index">Home</a></li>
+        @if (category != null)
+        {
+            var li = category.GetParentCategory();
+            foreach (var l in li)
+            {
+                <li class="breadcrumb-item active" aria-current="page">
+                    <a asp-action="Index" asp-controller="ViewPost" asp-area="Blog" asp-route-slug="@l.Slug">@l.Title</a>
+                </li>
+            }
+        }
+    </ol>
+</nav>
+
+<h5>@ViewData["Title"]</h5>
+<hr>
+
+@foreach (var post in Model)
+{
+    <div class="media  border-bottom pb-2 mb-4">
+        <img src="/contents/no-image.jpg" class="mr-3 border img-thumbnail" alt="Hình ảnh" width="150">
+        <div class="media-body">
+            <h5 class="mt-0">
+                <a asp-action="Details" asp-controller="ViewPost" asp-area="Blog" asp-route-postslug="@post.Slug">
+                    @post.Title
+                </a>
+            </h5>
+            <p>
+                @post.Description
+            </p>
+            <p>Danh mục:
+                <strong class="text-success">
+                    @{
+                        List<string> cateList = new List<string>();
+                        foreach (var postcate in post.PostCategories)
+                        {
+                            cateList.Add(postcate.Category.Title);
+                        }
+                    }
+                    @string.Join(", ", cateList)
+                </strong>
+            </p>
+            <p class="author-row">Tác giả: <strong>@post.Author.UserName</strong></p>
+            <p class="date-row">Ngày tạo: <i>@post.DateCreated.ToShortDateString()</i></p>
+        </div>
+    </div>
+}
+
+@{
+    PagingModel pagingModel = new PagingModel()
+            {
+                currentpage = ViewBag.CurrentPage,
+                countpages = ViewBag.CountPage,
+                generateUrl = (pageNumber) => Url.Action("Index", new
+                {
+                    p = pageNumber
+                })
+            };
+}
+
+<partial name="_PagingXTL" model="pagingModel" />
+
+@section SideBar {
+    <h5>Danh mục</h5>
+    <hr>
+    @await Component.InvokeAsync("App.Components.CategorySidebar",
+            new CategorySidebar.CategorySidebarData() {
+            Categories = categories,
+            level = 0,
+            categoryslug = ViewBag.slug
+    })
+}

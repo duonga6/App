@@ -1,0 +1,25 @@
+.category-sidebar 
+{
+    ul,li 
+    {
+        list-style: none;
+        padding-left: 8px;
+    }
+
+    a 
+    {
+        text-decoration: none;
+        &:hover {
+            color: chocolate;
+        }
+
+        &.active {
+            color: crimson;
+        }
+    }
+
+    >ul>li>a
+    {
+        font-weight: bold;
+    }
+}

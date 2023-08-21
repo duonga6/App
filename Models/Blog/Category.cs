@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -43,6 +44,33 @@ namespace App.Models.Blog
         [ForeignKey("ParentCategoryId")]
         [Display(Name = "Danh mục cha")]
         public Category ParentCategory { set; get; }
+
+        public void ChildCategoriesID(ICollection<Category> childcates, List<int> lists)
+        {
+            if (childcates == null) childcates = this.CategoryChildren;
+            foreach(Category cate in childcates)
+            {
+                lists.Add(cate.Id);
+                ChildCategoriesID(cate.CategoryChildren, lists);
+            }
+        }
+
+        public List<Category> GetParentCategory()
+        {
+            List<Category> li = new List<Category>();
+
+            var parent = this.ParentCategory;
+
+            while(parent != null)
+            {
+                li.Add(parent);
+                parent = parent.ParentCategory;
+            }
+
+            li.Reverse();
+
+            return li;
+        }
 
     }
 }

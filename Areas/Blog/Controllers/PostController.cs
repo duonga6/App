@@ -16,7 +16,7 @@ using App.Utilities;
 namespace App.Areas.Blog.Controllers
 {
     [Area("Blog")]
-    [Route("/admin/blod/post/[action]/{id?}")]
+    [Route("/admin/blog/post/[action]/{id?}")]
     [Authorize(Roles = RoleName.Administrator + "," + RoleName.Editor)]
     public class PostController : Controller
     {
@@ -36,7 +36,7 @@ namespace App.Areas.Blog.Controllers
         }
 
         // GET: Blog/Post
-        [Route("/admin/blod/post/index", Name = "BlogPostIndexRoute")]
+        [Route("/admin/blog/post", Name = "BlogPostIndexRoute")]
         public async Task<IActionResult> Index([FromQuery(Name = "page")] int currentPage)
         {
             var posts = _context.Posts.Include(p => p.Author).OrderByDescending(p => p.DateUpdated);
@@ -215,16 +215,15 @@ namespace App.Areas.Blog.Controllers
 
                     if (post.CategoriesID == null) post.CategoriesID = new int[]{};
 
-                    var oldCateId = postUpdate.PostCategories.Select(p => p.CategoryID);
+                    var oldCatePost = postUpdate.PostCategories.Select(p => p);
                     var newCateID = post.CategoriesID;
 
-                    var removeCate = from postCate in _context.PostCategories
-                                        where (!newCateID.Contains(postCate.CategoryID))
-                                        select postCate;
+                    var removeCate = oldCatePost.Where(c => !newCateID.Contains(c.CategoryID));
 
                     _context.PostCategories.RemoveRange(removeCate);
+                    
 
-                    var addCate = newCateID.Where(c => !oldCateId.Contains(c));
+                    var addCate = newCateID.Where(c => !postUpdate.PostCategories.Where(p => p.CategoryID == c).Any());
                     foreach(var item in addCate)
                     {
                         _context.PostCategories.Add(new PostCategory() {

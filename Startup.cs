@@ -153,34 +153,11 @@ namespace App
 
             app.UseEndpoints(endpoints =>
             {
-
-                endpoints.MapControllerRoute(
-                    name: "first",
-                    pattern: "{url}/{id:range(2,4)}",
-                    defaults: new {
-                        controller = "First",
-                        action = "ViewProduct"
-                    },
-                    constraints: new {
-                        url = "xemsanpham"
-                    }
-                );
-
-                endpoints.MapAreaControllerRoute(
-                    name: "product",
-                    pattern: "/{controller=Home}/{action=Index}/{id?}",
-                    areaName: "ProductManager"
-                );
-
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "/{controller=Home}/{action=Index}/{id?}"
                 );
                 
-                endpoints.MapGet("/sayhi", async context => {
-                    await context.Response.WriteAsync($"Hello ASP.NET MVC {DateTime.Now}");
-                });
-
                 endpoints.MapRazorPages();
             });
         }

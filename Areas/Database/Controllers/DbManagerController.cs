@@ -103,7 +103,7 @@ namespace App.Areas.Database.Controllers
             // Phát sinh Category
             var fakerCategory = new Faker<Category>();
             int cm = 1;
-            fakerCategory.RuleFor(c => c.Title, fk => $"CM{cm++}" + fk.Lorem.Sentence(1,2).Trim('.'));
+            fakerCategory.RuleFor(c => c.Title, fk => $"CM {cm++} " + fk.Lorem.Sentence(1,2).Trim('.'));
             fakerCategory.RuleFor(c => c.Content, fk => fk.Lorem.Sentence(5) + "[FakeData]");
             fakerCategory.RuleFor(c => c.Slug, fk => fk.Lorem.Slug());
 
@@ -136,7 +136,7 @@ namespace App.Areas.Database.Controllers
             fakerPost.RuleFor(p => p.Description, f => f.Lorem.Sentences(3));
             fakerPost.RuleFor(p => p.Published, f => true);
             fakerPost.RuleFor(p => p.Slug, f => f.Lorem.Slug());
-            fakerPost.RuleFor(p => p.Title, f => $"Bài {bv++}" + f.Lorem.Sentence(3, 4).Trim('.'));
+            fakerPost.RuleFor(p => p.Title, f => $"Bài {bv++} " + f.Lorem.Sentence(3, 4).Trim('.'));
 
             List<Post> posts = new List<Post>();
             List<PostCategory> postCategories = new List<PostCategory>();
