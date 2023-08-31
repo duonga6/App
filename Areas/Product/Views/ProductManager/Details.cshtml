@@ -1,0 +1,71 @@
+@model App.Models.Product.ProductModel
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<h1>@ViewData["Title"]</h1>
+    <hr />
+
+<div>
+    <dl class="row">
+        <dt class = "col-sm-3">
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+        <dd class = "col-sm-9">
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+        <dt class = "col-sm-3">
+            @Html.DisplayNameFor(model => model.Price)
+        </dt>
+        <dd class = "col-sm-9">
+            @Html.DisplayFor(model => model.Price)
+        </dd>
+        <dt class = "col-sm-3">
+            @Html.DisplayNameFor(model => model.Description)
+        </dt>
+        <dd class = "col-sm-9">
+            @Html.DisplayFor(model => model.Description)
+        </dd>
+        <dt class = "col-sm-3">
+            @Html.DisplayNameFor(model => model.Slug)
+        </dt>
+        <dd class = "col-sm-9">
+            @Html.DisplayFor(model => model.Slug)
+        </dd>
+        <dt class = "col-sm-3">
+            @Html.DisplayNameFor(model => model.Content)
+        </dt>
+        <dd class = "col-sm-9">
+            @Html.Raw(Model.Content)
+        </dd>
+        <dt class = "col-sm-3">
+            @Html.DisplayNameFor(model => model.Published)
+        </dt>
+        <dd class = "col-sm-9">
+            @Html.DisplayFor(model => model.Published)
+        </dd>
+        <dt class = "col-sm-3">
+            @Html.DisplayNameFor(model => model.Author)
+        </dt>
+        <dd class = "col-sm-9">
+            @Html.DisplayFor(model => model.Author.UserName)
+        </dd>
+        <dt class = "col-sm-3">
+            @Html.DisplayNameFor(model => model.DateCreated)
+        </dt>
+        <dd class = "col-sm-9">
+            @Html.DisplayFor(model => model.DateCreated)
+        </dd>
+        <dt class = "col-sm-3">
+            @Html.DisplayNameFor(model => model.DateUpdated)
+        </dt>
+        <dd class = "col-sm-9">
+            @Html.DisplayFor(model => model.DateUpdated)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.ProductID">Chỉnh sửa</a> |
+    <a asp-action="Index">Quay lại danh sách</a>
+</div>

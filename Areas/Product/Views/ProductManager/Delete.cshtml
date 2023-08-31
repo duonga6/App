@@ -1,0 +1,23 @@
+@model App.Models.Product.ProductModel
+
+@{
+    ViewData["Title"] = "Xóa bài viết";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<h3>Bạn có chắc muốn xóa bài viết này?</h3>
+<div>
+    <hr />
+    <dl class="row">
+        <div class="col-8">
+            <h4>@Model.Title</h4>
+        </div>
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="ProductID" />
+        <input type="submit" value="Đồng ý" class="btn btn-danger" /> |
+        <a asp-action="Index">Quay lại danh sách</a>
+    </form>
+</div>

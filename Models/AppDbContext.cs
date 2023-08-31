@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using App.Models.Contacts;
 using App.Models.Blog;
+using App.Models.Product;
 
 namespace App.Models
 {
@@ -45,6 +46,23 @@ namespace App.Models
                 entity.HasIndex(p => p.Slug)
                         .IsUnique();
             });
+
+            modelBuilder.Entity<CategoryProduct>(entity => {
+                entity.HasIndex(c => c.Slug)
+                        .IsUnique();
+            });
+
+            modelBuilder.Entity<ProductCategory>(entity => {
+                entity.HasKey(c => new {
+                    c.ProductID,
+                    c.CategoryID
+                });
+            });
+
+            modelBuilder.Entity<ProductModel>(entity => {
+                entity.HasIndex(p => p.Slug)
+                        .IsUnique();
+            });
         }
 
         public DbSet<Contact> Contacts {set;get;}
@@ -54,6 +72,12 @@ namespace App.Models
         public DbSet<Post> Posts {set;get;}
 
         public DbSet<PostCategory> PostCategories {set;get;}
+
+        public DbSet<CategoryProduct> CategoryProducts {set;get;}
+
+        public DbSet<ProductModel> Products {set;get;}
+
+        public DbSet<ProductCategory> ProductCategories {set;get;}
 
     }
 }

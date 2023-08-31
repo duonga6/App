@@ -1,0 +1,28 @@
+@model App.Models.Product.CategoryProduct
+
+@{
+    ViewData["Title"] = @Model.Title;
+}
+
+<h1>@Model.Title</h1>
+<div>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-4">
+            @Html.DisplayNameFor(model => model.Content)
+        </dt>
+        <dd class = "col-sm-8">
+            @Html.Raw(Model.Content)
+        </dd>
+        <dt class = "col-sm-4">
+            Url
+        </dt>
+        <dd class = "col-sm-8">
+            @Html.DisplayFor(model => model.Slug)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Sửa</a> |
+    <a asp-action="Index">Quay lại</a>
+</div>

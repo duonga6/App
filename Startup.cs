@@ -50,7 +50,7 @@ namespace App
             services.Configure<RazorViewEngineOptions>(options => {
                 options.ViewLocationFormats.Add("/MyView/{1}/{0}" + RazorViewEngine.ViewExtension);
             });
-            services.AddSingleton<ProductService, ProductService>();
+            // services.AddSingleton<ProductService, ProductService>();
             services.AddSingleton(typeof(PlanetService), typeof(PlanetService));
 
             services.AddDbContext<AppDbContext>(options =>
