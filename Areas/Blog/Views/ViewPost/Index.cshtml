@@ -18,6 +18,10 @@
                     <a asp-action="Index" asp-controller="ViewPost" asp-area="Blog" asp-route-slug="@l.Slug">@l.Title</a>
                 </li>
             }
+            
+            <li class="breadcrumb-item active" aria-current="page">
+                    <a asp-action="Index" asp-controller="ViewProduct" asp-area="Product" asp-route-slug="@category.Slug">@category.Title</a>
+             </li>
         }
     </ol>
 </nav>

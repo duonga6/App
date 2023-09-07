@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using App.Areas.Product.Services;
 using App.Data;
 using App.ExtendMethods;
 using App.Models;
@@ -27,7 +28,7 @@ namespace App
     public class Startup
     {
 
-        public static string RootPath {set;get;}
+        public static string RootPath { set; get; }
 
         public Startup(IConfiguration configuration, IWebHostEnvironment env)
         {
@@ -40,6 +41,12 @@ namespace App
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDistributedMemoryCache();           // Đăng ký dịch vụ lưu cache trong bộ nhớ (Session sẽ sử dụng nó)
+            services.AddSession(cfg =>                      // Đăng ký dịch vụ Session
+            {
+                cfg.Cookie.Name = "xuanthulab";             // Đặt tên Session - tên này sử dụng ở Browser (Cookie)
+                cfg.IdleTimeout = new TimeSpan(0, 30, 0);    // Thời gian tồn tại của Session
+            });
             services.AddOptions();
             var mailsettings = Configuration.GetSection("MailSettings"); // Đọc thiết lập gửi Mail trong appsettings.json
             services.Configure<MailSettings>(mailsettings);
@@ -47,7 +54,8 @@ namespace App
 
             services.AddControllersWithViews();
             services.AddRazorPages();
-            services.Configure<RazorViewEngineOptions>(options => {
+            services.Configure<RazorViewEngineOptions>(options =>
+            {
                 options.ViewLocationFormats.Add("/MyView/{1}/{0}" + RazorViewEngine.ViewExtension);
             });
             // services.AddSingleton<ProductService, ProductService>();
@@ -90,7 +98,8 @@ namespace App
                 options.SignIn.RequireConfirmedAccount = false;         // Xác thực tất cả mới được đăng nhập
             });
 
-            services.ConfigureApplicationCookie(options => {
+            services.ConfigureApplicationCookie(options =>
+            {
                 options.LoginPath = "/login"; // Trang đăng nhập
                 options.LogoutPath = "/logout"; // Trang đăng xuất
                 options.AccessDeniedPath = "/khongduoctruycap.html"; // Trang cấm truy cập
@@ -98,27 +107,33 @@ namespace App
 
             // Thêm dịch vụ đăng nhập từ nguồn bên ngoài
             services.AddAuthentication()
-                    .AddGoogle(options => {
+                    .AddGoogle(options =>
+                    {
                         var googleConfig = Configuration.GetSection("Authentication:Google"); // Đọc options từ appsettings.json
                         options.ClientId = googleConfig["ClientId"];
                         options.ClientSecret = googleConfig["ClientSecret"];
                         options.CallbackPath = "/dang-nhap-tu-google"; // Đường dẫn tới trang đăng nhập với google
                     })
-                    .AddFacebook(options => {
+                    .AddFacebook(options =>
+                    {
                         var fbConfig = Configuration.GetSection("Authentication:Facebook");
                         options.AppId = fbConfig["AppId"];
                         options.AppSecret = fbConfig["AppSecret"];
                         options.CallbackPath = "/dang-nhap-tu-facebook";
                     });
-            
+
             services.AddSingleton<IdentityErrorDescriber, AppIdentityErrorDescriber>();
 
-            services.AddAuthorization(options => {
-                options.AddPolicy("ViewAdminMenu", builer => {
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("ViewAdminMenu", builer =>
+                {
                     builer.RequireAuthenticatedUser();
                     builer.RequireRole(RoleName.Administrator);
                 });
             });
+
+            services.AddTransient<CartService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -137,12 +152,15 @@ namespace App
             app.UseHttpsRedirection();
 
             app.UseStaticFiles();
-            app.UseStaticFiles(new StaticFileOptions() {
+            app.UseStaticFiles(new StaticFileOptions()
+            {
                 FileProvider = new PhysicalFileProvider(
                     Path.Combine(Directory.GetCurrentDirectory(), "Uploads")
                 ),
                 RequestPath = "/contents"
             });
+
+            app.UseSession();
 
             app.AddStatusCodePage(); //Tạo ra các response từ lỗi 400 - 599
 
@@ -157,7 +175,7 @@ namespace App
                     name: "default",
                     pattern: "/{controller=Home}/{action=Index}/{id?}"
                 );
-                
+
                 endpoints.MapRazorPages();
             });
         }

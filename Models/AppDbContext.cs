@@ -79,5 +79,7 @@ namespace App.Models
 
         public DbSet<ProductCategory> ProductCategories {set;get;}
 
+        public DbSet<ProductPhoto> ProductPhotos {set;get;}
+
     }
 }

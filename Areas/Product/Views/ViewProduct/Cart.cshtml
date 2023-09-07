@@ -1,0 +1,79 @@
+@model List<App.Areas.Product.Models.CartItem>
+@{
+    Layout = "_Layout";
+}
+
+<h2>Giỏ hàng</h2>
+
+@if(Model.Count() > 0)
+{
+    int stt = 1;
+    decimal total = 0;
+    <table class="table">
+        <tr>
+            <th>#</th>
+            <th>Sản phẩm</th>
+            <th>Giá</th>
+            <th>Số lượng</th>
+            <th>Thành tiền</th>
+            <th></th>
+        </tr>
+        @foreach(var item in Model)
+        {
+            var thanhtien = item.Quantity * item.Product.Price;
+            <tr>
+                <td>@(stt++)</td>
+                <td>@item.Product.Title</td>
+                <td>@item.Product.Price.ToString("n0")</td>
+                <td>
+                    <input asp-for="@item.Quantity" class="w-25" id="quantity-@(item.Product.ProductID)"/>
+                </td>
+                <td>@(thanhtien.ToString("n0"))</td>
+                <td>
+                    <a class="btn btn-success text-white" style="cursor: pointer;" data-id="@item.Product.ProductID" id="btnUpdateQuantity">Cập nhật</a>
+                    <a class="btn btn-danger text-white" asp-action="DeleteCartItem" asp-controller="ViewProduct" asp-area="Product" asp-route-productid="@item.Product.ProductID">Xóa</a>
+                </td>
+            </tr>
+            total += thanhtien;
+        }
+        <tr>
+            <td colspan="4"></td>
+            <td>@total.ToString("n0")</td>
+            <td></td>
+        </tr>
+    </table>
+}
+else
+{
+    <p class="alert alert-danger">Giỏ hàng đang trống</p>
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $("#btnUpdateQuantity").click(function() {
+                const productID = $(this).data("id");
+                const quantity = $(`#quantity-${productID}`).val();
+
+                const formData = new FormData();
+                formData.append("productid", productID);
+                formData.append("quantity", quantity);
+
+                console.log(formData);
+
+                $.ajax({
+                    url: '@Url.Action("UpdateQuantityCart", "ViewProduct")',
+                    data: formData,
+                    type: 'POST',
+                    processData: false,
+                    contentType: false,
+                    success: function()
+                    {
+
+                    }
+                })
+                
+            });
+        });
+    </script>
+}

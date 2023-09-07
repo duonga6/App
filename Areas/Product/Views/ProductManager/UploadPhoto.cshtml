@@ -1,0 +1,120 @@
+@model App.Areas.Product.Controllers.ProductManagerController.UploadOneFile
+
+@{
+    ProductModel product = ViewBag.product;
+}
+<h3>Upload photo: @product.Title</h3>
+<form method="post" enctype="multipart/form-data">
+    <label asp-for="FileUpload"></label>
+    <input asp-for="FileUpload"></input>
+    <span asp-validation-for="FileUpload"></span>
+
+    <button class="btn btn-primary" asp-action="UploadPhoto" asp-route-id="@product.ProductID">Upload</button>
+
+</form>
+
+<hr>
+
+<input type="file" id="selectFileUpload" class="collapse" onchange="AutoUploadPhoto()" />
+<span class="btn btn-primary" onclick="ClickBtnUpload()">Upload</span>
+
+<div id="box-photo-upload" class="d-flex flex-wrap photo-upload" data-id="@product.ProductID">
+
+</div>
+
+@section Scripts {
+    <script>
+
+        function ClickBtnUpload() {
+            $("#selectFileUpload").click();
+        }
+
+        function AutoUploadPhoto() {
+            var fileupload = document.getElementById("selectFileUpload").files;
+            if (fileupload.length == 0) return;
+
+            var formData = new FormData();
+            var id = $("#box-photo-upload").data("id");
+            formData.append("id", id);
+            formData.append("FileUpload", fileupload[0])
+
+            var urlUpload = "@Url.Action("UploadPhotoApi")";
+
+            $.ajax({
+                data: formData,
+                cache: false,
+                url: urlUpload,
+                type: "POST",
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    LoadPhotos();
+                }
+            });
+        }
+
+        function setClickDeletePhoto() {
+            var deleteBtn = $("#box-photo-upload .photodetail span");
+            deleteBtn.click(function () {
+                if (confirm("Có chắc chắn xóa ảnh không?") != true) return;
+
+                var id = $(this).data("id");
+
+                var formData = new FormData();
+                formData.append("id", id);
+
+                var urlDeletePhoto = "@Url.Action("DeletePhoto")";
+
+                $.ajax({
+                    data: formData,
+                    cache: false,
+                    url: urlDeletePhoto,
+                    type: "POST",
+                    contentType: false,
+                    processData: false,
+                    success: function (data) {
+                        LoadPhotos();
+                    }
+                });
+            });
+
+        }
+
+        function LoadPhotos() {
+            var box = $("#box-photo-upload");
+            var ProductID = box.data("id");
+            box.empty();
+
+            var urlPhoto = "@Url.Action("ListPhotos")";
+            var formData = new FormData();
+
+            formData.append("id", ProductID);
+
+
+            $.ajax({
+                data: formData,
+                cache: false,
+                url: urlPhoto,
+                type: "POST",
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    data.photos.forEach(item => {
+                        var html = $(`
+                                        <div class="photodetail w-25 p-1">
+                                            <img class="w-100 img-fluid" src="${item.path}" />
+                                            <span class="btn btn-danger" data-id="${item.id}">Delete</span>
+                                        </div>`);
+                        box.append(html);
+                    });
+                    setClickDeletePhoto();
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            LoadPhotos();
+        });
+
+    </script>
+}

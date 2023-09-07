@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
@@ -52,5 +53,8 @@ namespace App.Models.Product
 
         [Display(Name = "Ngày cập nhật")]
         public DateTime DateUpdated { set; get; }
+        
+        [DisplayName("Hình ảnh")]
+        public List<ProductPhoto> Photos {set;get;}
     }
 }

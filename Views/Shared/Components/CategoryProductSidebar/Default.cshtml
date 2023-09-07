@@ -1,0 +1,39 @@
+@using App.Components
+@model App.Components.CategoryProductSidebar.CategorySidebarData
+@{
+    int currentLevel = Model.level;
+}
+
+@{
+    if (Model.Categories.Count > 0)
+    {
+        if (currentLevel == 0)
+        {
+            @Html.Raw("<div class='category-sidebar'>")
+        }
+        <ul>
+            @foreach(var category in Model.Categories)
+            {
+                var active = (category.Slug == Model.categoryslug) ? "active" : "";
+                <li>
+                    <a class="@active" asp-controller="ViewProduct" asp-action="Index" asp-area="Product" asp-route-slug="@category.Slug">
+                        @category.Title
+                    </a>
+                    @if (category.CategoryChildren?.Count > 0)
+                    {
+                        @await Component.InvokeAsync("App.Components.CategoryProductSidebar", 
+                            new CategoryProductSidebar.CategorySidebarData() {
+                            Categories = category.CategoryChildren.ToList(),
+                            level = currentLevel + 1,
+                            categoryslug = ViewBag.slug
+                        });
+                    }
+                </li>
+            }
+        </ul>
+        if (currentLevel == 0)
+        {
+            @Html.Raw("</div>")
+        }
+    }
+}

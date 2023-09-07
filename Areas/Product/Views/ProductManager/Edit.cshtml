@@ -1,7 +1,7 @@
 @model App.Areas.Product.Models.CreateProductModel
 
 @{
-    ViewData["Title"] = "Chỉnh sửa bài viết";
+    ViewData["Title"] = "Chỉnh sửa sản phẩm";
 }
 
 <h1>@ViewData["Title"]</h1>
@@ -22,6 +22,20 @@
                 <input asp-for="Title" class="form-control" />
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
+
+            <div class="form-group">
+                <label asp-for="Photos" class="control-label"></label>
+                <br/>
+                <input type="file" id="selectFileUpload" class="collapse" onchange="AutoUploadPhoto()" />
+                <span class="btn btn-primary" onclick="ClickBtnUpload()">Upload</span>
+
+                <div id="box-photo-upload" class="d-flex flex-wrap photo-upload" data-id="@Model.ProductID">
+
+                </div>
+            </div>
+
+
+
             <div class="form-group">
                 <label asp-for="Price" class="control-label"></label>
                 <input asp-for="Price" class="form-control" />
@@ -44,7 +58,8 @@
             </div>
             <div class="form-group form-check">
                 <label class="form-check-label">
-                    <input class="form-check-input" asp-for="Published" /> @Html.DisplayNameFor(model => model.Published)
+                    <input class="form-check-input" asp-for="Published" /> @Html.DisplayNameFor(model =>
+                    model.Published)
                 </label>
             </div>
             <div class="form-group">
@@ -60,9 +75,10 @@
 
 
 @{
-    var summernoteModel = new Summernote("Content") {
-        Height = 500
-    };
+    var summernoteModel = new Summernote("Content")
+            {
+                Height = 500
+            };
 }
 
 <partial name="_Summernote" model="@summernoteModel"></partial>
@@ -82,4 +98,98 @@
     </script>
 
     <partial name="_ValidationScriptsPartial" />
+    <script>
+
+        function ClickBtnUpload() {
+            $("#selectFileUpload").click();
+        }
+
+        function AutoUploadPhoto() {
+            var fileupload = document.getElementById("selectFileUpload").files;
+            if (fileupload.length == 0) return;
+
+            var formData = new FormData();
+            var id = $("#box-photo-upload").data("id");
+            formData.append("id", id);
+            formData.append("FileUpload", fileupload[0])
+
+            var urlUpload = "@Url.Action("UploadPhotoApi")";
+
+            $.ajax({
+                data: formData,
+                cache: false,
+                url: urlUpload,
+                type: "POST",
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    LoadPhotos();
+                }
+            });
+        }
+
+        function setClickDeletePhoto() {
+            var deleteBtn = $("#box-photo-upload .photodetail span");
+            deleteBtn.click(function () {
+                if (confirm("Có chắc chắn xóa ảnh không?") != true) return;
+
+                var id = $(this).data("id");
+
+                var formData = new FormData();
+                formData.append("id", id);
+
+                var urlDeletePhoto = "@Url.Action("DeletePhoto")";
+
+                $.ajax({
+                    data: formData,
+                    cache: false,
+                    url: urlDeletePhoto,
+                    type: "POST",
+                    contentType: false,
+                    processData: false,
+                    success: function (data) {
+                        LoadPhotos();
+                    }
+                });
+            });
+
+        }
+
+        function LoadPhotos() {
+            var box = $("#box-photo-upload");
+            var ProductID = box.data("id");
+            box.empty();
+
+            var urlPhoto = "@Url.Action("ListPhotos")";
+            var formData = new FormData();
+
+            formData.append("id", ProductID);
+
+
+            $.ajax({
+                data: formData,
+                cache: false,
+                url: urlPhoto,
+                type: "POST",
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    data.photos.forEach(item => {
+                        var html = $(`
+                                        <div class="photodetail w-25 p-1">
+                                            <img class="w-100 img-fluid" src="${item.path}" />
+                                            <span class="btn btn-danger" data-id="${item.id}">Delete</span>
+                                        </div>`);
+                        box.append(html);
+                    });
+                    setClickDeletePhoto();
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            LoadPhotos();
+        });
+
+    </script>
 }
