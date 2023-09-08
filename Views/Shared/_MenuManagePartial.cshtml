@@ -8,10 +8,14 @@
 
 @if (result.Succeeded)
 {
-
+    <a class="nav-link text-white" asp-action="Index" asp-controller="AdminCP">
+        <i class="fas fa-cog"></i>
+        Quản trị 
+        </a>
     <div class="dropdown open">
         <button class="btn dropdown-toggle" type="button" id="triggerId" data-toggle="dropdown" aria-haspopup="true"
             aria-expanded="false">
+            <i class="fas fa-cog"></i>
             Manager
         </button>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="triggerId">

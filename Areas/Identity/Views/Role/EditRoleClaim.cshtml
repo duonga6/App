@@ -1,6 +1,7 @@
 @model EditClaimModel
 @{
     ViewData["Title"] = "Gán đặc tính cho role";
+    Layout = "_LayoutAdminChild";
 }
 <h2>@ViewData["Title"]: @Model.role.Name</h2>
 <partial name="_StatusMessage"></partial>

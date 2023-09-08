@@ -1,6 +1,7 @@
 @model AddUserClaimModel
 @{
     ViewData["Title"] = "Claim của user";
+    Layout = "_LayoutAdminChild";
 }
 <h1>@ViewData["Title"] : @ViewBag.user.UserName</h1>
 <partial name="_StatusMessage" />

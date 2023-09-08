@@ -1,0 +1,26 @@
+@using App.Menu
+@inject SidebarItemService _sidebarItemService
+
+@{
+    Layout = "_LayoutAdmin";
+}
+
+<div class="mb-4 text-gray-800">
+    @RenderBody()
+</div>
+
+@{
+    string controller = ViewContext.RouteData.Values["controller"] as string;
+    string area = ViewContext.RouteData.Values["area"] as string;
+    _sidebarItemService.SetActive(controller, area);
+}
+
+@section Sidebar
+{
+    @Html.Raw(_sidebarItemService.RenderHtml())
+}
+
+@section Scripts
+{
+    @RenderSection("Scripts", false)
+}
