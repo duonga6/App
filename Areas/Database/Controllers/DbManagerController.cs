@@ -7,6 +7,7 @@ using App.Models;
 using App.Models.Blog;
 using App.Models.Product;
 using Bogus;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -24,11 +25,14 @@ namespace App.Areas.Database.Controllers
 
         private readonly RoleManager<IdentityRole> _roleManager;
 
-        public DbManagerController(AppDbContext dbContext, UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager)
+        private readonly SignInManager<AppUser> _signManager;
+
+        public DbManagerController(AppDbContext dbContext, UserManager<AppUser> userManager, RoleManager<IdentityRole> roleManager, SignInManager<AppUser> signInManager)
         {
             _dbContext = dbContext;
             _userManager = userManager;
             _roleManager = roleManager;
+            _signManager = signInManager;
         }
 
         public IActionResult Index()
@@ -36,6 +40,7 @@ namespace App.Areas.Database.Controllers
             return View();
         }
 
+        [Authorize(Roles = RoleName.Administrator)]
         [HttpGet]
         public IActionResult DeleteDB()
         {
@@ -46,6 +51,7 @@ namespace App.Areas.Database.Controllers
         public string StatusMessage {set;get;}
 
         [HttpPost]
+        [Authorize(Roles = RoleName.Administrator)]
         public async Task<IActionResult> DeleteDBAsync()
         {
             var succes = await _dbContext.Database.EnsureDeletedAsync();
@@ -87,6 +93,18 @@ namespace App.Areas.Database.Controllers
 
                 await _userManager.CreateAsync(uadmin, "admin123");
                 await _userManager.AddToRoleAsync(uadmin, RoleName.Administrator);
+                await _signManager.SignInAsync(uadmin, false);
+
+                return RedirectToAction(nameof(SeedDataAsync));
+
+            }
+            else
+            {
+                var user = await _userManager.GetUserAsync(User);
+                if (user == null) return this.Forbid();
+                var role = await _userManager.GetRolesAsync(user);
+
+                if (!role.Any(r => r == RoleName.Administrator)) return this.Forbid();
             }
 
             SeedPostCategory();

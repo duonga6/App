@@ -1,0 +1,1 @@
+{"rsync":{"/vagrant":{"type":"rsync","guestpath":"/vagrant","hostpath":"J:/CS/NetCore/NET_5/ASP_NET_MVC/App/Vagrant","disabled":false,"__vagrantfile":true,"owner":"vagrant","group":"vagrant"}}}
